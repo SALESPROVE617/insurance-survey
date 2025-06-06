@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>保險業主管痛點調查問卷</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 5px solid #3498db;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .drag-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .drag-item {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: move;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .drag-item:hover {
+            border-color: #3498db;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(52, 152, 219, 0.2);
+        }
+
+        .drag-item.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+
+        .rank-number {
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: #3498db;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .item-title {
+            font-weight: 600;
+            font-size: 1.1em;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            padding-left: 20px;
+        }
+
+        .item-description {
+            color: #7f8c8d;
+            line-height: 1.5;
+        }
+
+        .details-section {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 2px solid #3498db;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.1);
+        }
+
+        .details-section.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question-group {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .question {
+            font-weight: 500;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .rating-scale {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .rating-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .rating-option:hover {
+            background-color: #e3f2fd;
+        }
+
+        .rating-option input[type="radio"] {
+            cursor: pointer;
+        }
+
+        .rating-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            font-size: 1.3em;
+            padding: 20px 40px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .current-step {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            color: #7f8c8d;
+        }
+
+        .instructions {
+            background: #e8f5e8;
+            border-left: 5px solid #27ae60;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .connection-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+            z-index: 1000;
+        }
+
+        .status-connected {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-disconnected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div id="connectionStatus" class="connection-status status-disconnected">
+        🔄 連接中...
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>保險業主管痛點調查問卷</h1>
+            <p>協助我們了解您在管理團隊時面臨的真實挑戰</p>
+        </div>
+
+        <div class="content">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="current-step" id="currentStep">步驟 1 / 2</div>
+
+            <!-- 第一部分：排序 -->
+            <div class="section" id="rankingSection">
+                <div class="section-title">第一部分：問題重要性排序</div>
+                <div class="info-box">
+                    <strong>說明：</strong>請將以下管理痛點按照對您來說的重要性進行排序（拖拽調整順序），最重要的放在最上面。
+                </div>
+                <div class="instructions">
+                    💡 <strong>操作提示：</strong>點住項目可以拖拽調整順序
+                </div>
+
+                <div class="drag-container" id="dragContainer">
+                    <div class="drag-item" draggable="true" data-id="1">
+                        <div class="rank-number">1</div>
+                        <div class="item-title">無法歸檔成功案例</div>
+                        <div class="item-description">團隊的成功經驗無法有效整理和保存，導致寶貴經驗流失</div>
+                    </div>
+                    <div class="drag-item" draggable="true" data-id="2">
+                        <div class="rank-number">2</div>
+                        <div class="item-title">無法快速分享案例</div>
+                        <div class="item-description">即使有好的案例，也缺乏快速有效的分享機制</div>
+                    </div>
+                    <div class="drag-item" draggable="true" data-id="3">
+                        <div class="rank-number">3</div>
+                        <div class="item-title">不知道如何歸納成功模式並傳達</div>
+                        <div class="item-description">難以將個別成功案例提煉成可複製的成功模式</div>
+                    </div>
+                    <div class="drag-item" draggable="true" data-id="4">
+                        <div class="rank-number">4</div>
+                        <div class="item-title">把知識變成好學習和分享的教材</div>
+                        <div class="item-description">缺乏將實務知識轉化為有效教學內容的能力</div>
+                    </div>
+                    <div class="drag-item" draggable="true" data-id="5">
+                        <div class="rank-number">5</div>
+                        <div class="item-title">如何指導業務找到客戶買單的理由</div>
+                        <div class="item-description">難以教導業務人員挖掘客戶真實需求和購買動機</div>
+                    </div>
+                    <div class="drag-item" draggable="true" data-id="6">
+                        <div class="rank-number">6</div>
+                        <div class="item-title">如何指導業務賣哪張保單最fit</div>
+                        <div class="item-description">缺乏有效方法幫助業務選擇最適合客戶的保險產品</div>
+                    </div>
+                    <div class="drag-item" draggable="true" data-id="7">
+                        <div class="rank-number">7</div>
+                        <div class="item-title">教導業務如何把拒絕問題回答的好</div>
+                        <div class="item-description">業務面對客戶拒絕時缺乏有效的應對技巧</div>
+                    </div>
+                    <div class="drag-item" draggable="true" data-id="8">
+                        <div class="rank-number">8</div>
+                        <div class="item-title">新人上手慢</div>
+                        <div class="item-description">新進人員學習曲線過長，影響團隊整體效率</div>
+                    </div>
+                    <div class="drag-item" draggable="true" data-id="9">
+                        <div class="rank-number">9</div>
+                        <div class="item-title">新人話術學了不會用</div>
+                        <div class="item-description">新人雖然學會理論，但無法靈活運用在實際銷售情境中</div>
+                    </div>
+                    <div class="drag-item" draggable="true" data-id="10">
+                        <div class="rank-number">10</div>
+                        <div class="item-title">快速監管業務表現</div>
+                        <div class="item-description">缺乏有效工具即時掌握團隊成員的業務表現</div>
+                    </div>
+                    <div class="drag-item" draggable="true" data-id="11">
+                        <div class="rank-number">11</div>
+                        <div class="item-title">時間有限，無法一對一輔導</div>
+                        <div class="item-description">管理職責繁重，難以提供每位成員個別化的深度指導</div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn" onclick="proceedToDetails()">確認排序，進入詳細評分</button>
+                </div>
+            </div>
+
+            <!-- 第二部分：詳細評分 -->
+            <div class="section" id="detailsSection" style="display: none;">
+                <div class="section-title">第二部分：詳細評分</div>
+                <div class="info-box">
+                    <strong>說明：</strong>請針對每個問題的各個面向進行1-5分評分（1分=非常不重要，5分=非常重要）
+                </div>
+
+                <!-- 詳細問題區域將由JavaScript動態生成 -->
+                <div id="detailQuestions"></div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-secondary" onclick="backToRanking()">返回排序</button>
+                    <button class="btn btn-success" onclick="submitSurvey()">提交問卷</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Supabase 配置
+        const SUPABASE_URL = 'https://akffmomysiclkwanzitf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFrZmZtb215c2ljbGt3YW56aXRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkxMTI4MjQsImV4cCI6MjA2NDY4ODgyNH0.0oXnk66tmPHfTNQU9gbaKIP2zlPrp-ghdPrS4Uesxgw';
+        
+        // 全域變數
+        let supabase = null;
+        let supabaseLoaded = false;
+        
+        // 安全載入 Supabase
+        function loadSupabase() {
+            if (supabaseLoaded) return;
+            
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+            script.onload = function() {
+                try {
+                    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    console.log('✅ Supabase 已成功連接');
+                    supabaseLoaded = true;
+                    updateConnectionStatus(true);
+                } catch (error) {
+                    console.error('❌ Supabase 初始化失敗:', error);
+                    updateConnectionStatus(false);
+                }
+            };
+            script.onerror = function() {
+                console.error('❌ Supabase 載入失敗');
+                updateConnectionStatus(false);
+            };
+            document.head.appendChild(script);
+        }
+
+        function updateConnectionStatus(connected) {
+            const statusElement = document.getElementById('connectionStatus');
+            if (connected) {
+                statusElement.textContent = '✅ 資料庫已連接';
+                statusElement.className = 'connection-status status-connected';
+            } else {
+                statusElement.textContent = '❌ 資料庫未連接';
+                statusElement.className = 'connection-status status-disconnected';
+            }
+        }
+
+        // 問卷數據結構
+        const surveyData = {
+            ranking: [],
+            details: {}
+        };
+
+        // 詳細問題定義 - 日常場景版本
+        const detailQuestions = {
+            1: [
+                "準備早會時花很多時間調閱資料，找不到之前的成功案例來分享",
+                "團隊成員離職時，他的成功經驗和客戶資料就跟著消失了",
+                "想要複製成功案例給其他同事參考，但資料散落各處很難整理"
+            ],
+            2: [
+                "聽到好的成交案例，想要立刻分享給團隊但缺乏快速傳播的管道",
+                "有業務問「某某客戶類型怎麼談」，想找類似案例但要翻很久才找到",
+                "開會時想分享案例，但臨時找不到完整的故事脈絡可以說"
+            ],
+            3: [
+                "知道某個業務很會成交，但說不出他的成功祕訣是什麼",
+                "想要教新人「怎麼做會成功」，但只能說「多看多學」這種空泛建議",
+                "每次成功都像是運氣，無法總結出可以重複使用的銷售套路"
+            ],
+            4: [
+                "培訓時只能講理論，缺乏生動的實戰案例讓學員更有感",
+                "做教育訓練時，學員常常打瞌睡或滑手機，互動性不夠",
+                "想要製作教學影片或互動教材，但不知道從何下手"
+            ],
+            5: [
+                "業務常說「客戶沒需求」，但其實是不知道怎麼挖掘客戶真正的痛點",
+                "看到業務硬推產品被客戶拒絕，但不知道怎麼教他找到客戶買單的理由",
+                "業務只會介紹產品功能，不會從客戶角度說明「為什麼需要這個保險」"
+            ],
+            6: [
+                "業務問「這個客戶適合哪張保單」時，我也要想很久才能建議",
+                "看到業務推錯產品，客戶條件明明適合A保單卻硬推B保單",
+                "想要建立一套「看到客戶背景就知道推薦哪張保單」的判斷標準"
+            ],
+            7: [
+                "業務被客戶說「我要考慮看看」就不知道怎麼回應，只能說「好」",
+                "聽到業務說「客戶說沒錢/沒需要」就放棄，不知道怎麼化解異議",
+                "想教業務面對拒絕時的應對話術，但自己也不知道標準答案是什麼"
+            ],
+            8: [
+                "新人進來三個月還在問基本問題，拖慢整個團隊的步調",
+                "新人要花很長時間才能獨立作業，期間需要大量的手把手指導",
+                "看到新人學習進度緩慢，但不知道如何加速他們的成長"
+            ],
+            9: [
+                "新人背得滾瓜爛熟的話術，一到現場就不知道怎麼活用",
+                "訓練時表現很好的新人，實際面對客戶時卻慌張失措",
+                "新人常說「客戶問的問題跟訓練的不一樣」，不知道如何應變"
+            ],
+            10: [
+                "不知道每位業務的真實工作狀況，只能等月底看業績才知道好壞",
+                "想要即時了解誰需要幫助，但缺乏系統性的監控工具",
+                "業務說「有在努力」但看不到具體行動，無法給予適當的指導"
+            ],
+            11: [
+                "想要一對一指導每個人，但時間不夠只能顧到會吵的那幾個",
+                "開會時間已經很長，沒有額外時間個別輔導需要幫助的同事",
+                "感覺自己像救火隊，哪裡有問題就去哪裡，無法系統性地培養人才"
+            ]
+        };
+
+        // 拖拽功能
+        let draggedElement = null;
+
+        function initDragAndDrop() {
+            const container = document.getElementById('dragContainer');
+            const items = container.querySelectorAll('.drag-item');
+
+            items.forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragover', handleDragOver);
+                item.addEventListener('drop', handleDrop);
+                item.addEventListener('dragend', handleDragEnd);
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+
+            if (draggedElement !== this) {
+                const container = document.getElementById('dragContainer');
+                const allItems = Array.from(container.children);
+                const draggedIndex = allItems.indexOf(draggedElement);
+                const targetIndex = allItems.indexOf(this);
+
+                if (draggedIndex < targetIndex) {
+                    container.insertBefore(draggedElement, this.nextSibling);
+                } else {
+                    container.insertBefore(draggedElement, this);
+                }
+
+                updateRankNumbers();
+            }
+
+            return false;
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            draggedElement = null;
+        }
+
+        function updateRankNumbers() {
+            const items = document.querySelectorAll('.drag-item');
+            items.forEach((item, index) => {
+                const rankNumber = item.querySelector('.rank-number');
+                rankNumber.textContent = index + 1;
+            });
+        }
+
+        function proceedToDetails() {
+            // 保存排序結果
+            const items = document.querySelectorAll('.drag-item');
+            surveyData.ranking = Array.from(items).map((item, index) => ({
+                id: item.dataset.id,
+                rank: index + 1,
+                title: item.querySelector('.item-title').textContent
+            }));
+
+            // 生成詳細問題
+            generateDetailQuestions();
+
+            // 切換到詳細評分部分
+            document.getElementById('rankingSection').style.display = 'none';
+            document.getElementById('detailsSection').style.display = 'block';
+            
+            // 更新進度
+            document.getElementById('progressFill').style.width = '100%';
+            document.getElementById('currentStep').textContent = '步驟 2 / 2';
+        }
+
+        function generateDetailQuestions() {
+            const container = document.getElementById('detailQuestions');
+            container.innerHTML = '';
+
+            surveyData.ranking.forEach((item, index) => {
+                const questions = detailQuestions[item.id];
+                if (questions) {
+                    const sectionDiv = document.createElement('div');
+                    sectionDiv.className = 'details-section active';
+                    sectionDiv.innerHTML = `
+                        <h3 style="color: #3498db; margin-bottom: 20px; font-size: 1.4em;">
+                            排序第${index + 1}名：${item.title}
+                        </h3>
+                        ${questions.map((question, qIndex) => `
+                            <div class="question-group">
+                                <div class="question">${question}</div>
+                                <div class="rating-scale">
+                                    ${[1,2,3,4,5].map(score => `
+                                        <div class="rating-option">
+                                            <input type="radio" name="q_${item.id}_${qIndex}" value="${score}" id="q_${item.id}_${qIndex}_${score}">
+                                            <label for="q_${item.id}_${qIndex}_${score}">${score}分</label>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <div class="rating-labels">
+                                    <span>非常不重要</span>
+                                    <span>非常重要</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    `;
+                    container.appendChild(sectionDiv);
+                }
+            });
+        }
+
+        function backToRanking() {
+            document.getElementById('detailsSection').style.display = 'none';
+            document.getElementById('rankingSection').style.display = 'block';
+            document.getElementById('progressFill').style.width = '50%';
+            document.getElementById('currentStep').textContent = '步驟 1 / 2';
+        }
+
+        async function submitSurvey() {
+            // 收集詳細評分數據
+            const detailInputs = document.querySelectorAll('#detailQuestions input[type="radio"]:checked');
+            
+            detailInputs.forEach(input => {
+                const [, itemId, questionIndex] = input.name.split('_');
+                if (!surveyData.details[itemId]) {
+                    surveyData.details[itemId] = {};
+                }
+                surveyData.details[itemId][`q${questionIndex}`] = parseInt(input.value);
+            });
+
+            // 檢查是否所有問題都已回答
+            const totalQuestions = surveyData.ranking.reduce((total, item) => {
+                return total + (detailQuestions[item.id] ? detailQuestions[item.id].length : 0);
+            }, 0);
+
+            if (detailInputs.length < totalQuestions) {
+                alert('請完成所有問題的評分再提交');
+                return;
+            }
+
+            // 準備符合新資料表結構的數據
+            const submissionData = {
+                respondent_id: generateRespondentId(),
+                ranking_data: surveyData.ranking,
+                detail_scores: surveyData.details,
+                top_concern: surveyData.ranking[0].title,
+                completion_status: 'completed'
+            };
+
+            // 顯示提交中狀態
+            const submitBtn = event.target;
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = '提交中...';
+            submitBtn.disabled = true;
+
+            try {
+                // 等待 Supabase 載入完成
+                let retryCount = 0;
+                while (!supabase && retryCount < 10) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    retryCount
