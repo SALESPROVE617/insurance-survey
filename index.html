@@ -74,6 +74,7 @@
             border-radius: 15px;
             padding: 30px;
             margin-bottom: 30px;
+            min-height: 200px;
         }
 
         .drag-item {
@@ -134,32 +135,6 @@
             line-height: 1.5;
         }
 
-        .details-section {
-            display: none;
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 20px;
-            border: 2px solid #3498db;
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.1);
-        }
-
-        .details-section.active {
-            display: block;
-            animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
         .question-group {
             margin-bottom: 25px;
             padding: 20px;
@@ -192,10 +167,6 @@
 
         .rating-option:hover {
             background-color: #e3f2fd;
-        }
-
-        .rating-option input[type="radio"] {
-            cursor: pointer;
         }
 
         .rating-labels {
@@ -265,43 +236,45 @@
             border-radius: 0 8px 8px 0;
         }
 
-        .connection-status {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-size: 0.9em;
-            font-weight: 500;
-            z-index: 1000;
+        .detail-section-item {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 2px solid #3498db;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.1);
         }
 
-        .status-connected {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        .hidden {
+            display: none;
         }
 
-        .status-disconnected {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        /* 手機版拖曳提示 */
         @media (max-width: 768px) {
-            .instructions {
-                background: #fff3cd;
-                border-left-color: #ffc107;
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .rating-scale {
+                flex-direction: column;
+                align-items: flex-start;
             }
         }
     </style>
 </head>
 <body>
-    <div id="connectionStatus" class="connection-status status-disconnected">
-        🔄 連接中...
-    </div>
-
     <div class="container">
         <div class="header">
             <h1>保險業主管痛點調查問卷</h1>
@@ -388,13 +361,12 @@
             </div>
 
             <!-- 第二部分：詳細評分 -->
-            <div class="section" id="detailsSection" style="display: none;">
+            <div class="section hidden" id="detailsSection">
                 <div class="section-title">第二部分：詳細評分</div>
                 <div class="info-box">
                     <strong>說明：</strong>請針對每個問題的各個面向進行1-5分評分（1分=非常不重要，5分=非常重要）
                 </div>
 
-                <!-- 詳細問題區域將由JavaScript動態生成 -->
                 <div id="detailQuestions"></div>
 
                 <div style="text-align: center; margin-top: 30px;">
@@ -406,56 +378,15 @@
     </div>
 
     <script>
-        // Supabase 配置
-        const SUPABASE_URL = 'https://akffmomysiclkwanzitf.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFrZmZtb215c2ljbGt3YW56aXRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkxMTI4MjQsImV4cCI6MjA2NDY4ODgyNH0.0oXnk66tmPHfTNQU9gbaKIP2zlPrp-ghdPrS4Uesxgw';
-        
-        // 全域變數
-        let supabase = null;
-        let supabaseLoaded = false;
-        
-        // 安全載入 Supabase
-        function loadSupabase() {
-            if (supabaseLoaded) return;
-            
-            const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-            script.onload = function() {
-                try {
-                    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                    console.log('✅ Supabase 已成功連接');
-                    supabaseLoaded = true;
-                    updateConnectionStatus(true);
-                } catch (error) {
-                    console.error('❌ Supabase 初始化失敗:', error);
-                    updateConnectionStatus(false);
-                }
-            };
-            script.onerror = function() {
-                console.error('❌ Supabase 載入失敗');
-                updateConnectionStatus(false);
-            };
-            document.head.appendChild(script);
-        }
+        console.log('🚀 JavaScript 開始載入...');
 
-        function updateConnectionStatus(connected) {
-            const statusElement = document.getElementById('connectionStatus');
-            if (connected) {
-                statusElement.textContent = '✅ 資料庫已連接';
-                statusElement.className = 'connection-status status-connected';
-            } else {
-                statusElement.textContent = '❌ 資料庫未連接';
-                statusElement.className = 'connection-status status-disconnected';
-            }
-        }
-
-        // 問卷數據結構
+        // 問卷數據
         const surveyData = {
             ranking: [],
             details: {}
         };
 
-        // 詳細問題定義 - 日常場景版本
+        // 詳細問題定義
         const detailQuestions = {
             1: [
                 "準備早會時花很多時間調閱資料，找不到之前的成功案例來分享",
@@ -514,93 +445,74 @@
             ]
         };
 
-        // 拖拽功能
+        // 拖拽相關變數
         let draggedElement = null;
-        let dragAfterElement = null;
 
+        // 初始化拖拽功能
         function initDragAndDrop() {
+            console.log('🖱️ 初始化拖拽功能');
+            
             const container = document.getElementById('dragContainer');
             const items = container.querySelectorAll('.drag-item');
+            
+            console.log('📋 找到拖拽項目:', items.length);
 
-            items.forEach(item => {
-                item.addEventListener('dragstart', handleDragStart);
-                item.addEventListener('dragend', handleDragEnd);
+            items.forEach((item, index) => {
+                // 拖拽事件
+                item.addEventListener('dragstart', function(e) {
+                    console.log('🏃 開始拖拽項目:', index + 1);
+                    draggedElement = this;
+                    this.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                item.addEventListener('dragend', function(e) {
+                    console.log('✋ 拖拽結束');
+                    this.classList.remove('dragging');
+                    const allItems = document.querySelectorAll('.drag-item');
+                    allItems.forEach(item => item.classList.remove('drag-over'));
+                    updateRankNumbers();
+                });
             });
 
-            container.addEventListener('dragover', handleDragOver);
-            container.addEventListener('drop', handleDrop);
-        }
-
-        function handleDragStart(e) {
-            draggedElement = this;
-            this.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/html', this.outerHTML);
-        }
-
-        function handleDragEnd(e) {
-            this.classList.remove('dragging');
-            
-            // 清除所有 drag-over 效果
-            const items = document.querySelectorAll('.drag-item');
-            items.forEach(item => item.classList.remove('drag-over'));
-            
-            draggedElement = null;
-            dragAfterElement = null;
-        }
-
-        function handleDragOver(e) {
-            if (e.preventDefault) {
+            // 容器事件
+            container.addEventListener('dragover', function(e) {
                 e.preventDefault();
-            }
-            e.dataTransfer.dropEffect = 'move';
-
-            const afterElement = getDragAfterElement(e.clientY);
-            const container = document.getElementById('dragContainer');
-            
-            // 清除之前的 drag-over 效果
-            const items = container.querySelectorAll('.drag-item');
-            items.forEach(item => item.classList.remove('drag-over'));
-
-            if (afterElement == null) {
-                // 在最後面
-                const lastChild = container.querySelector('.drag-item:last-child');
-                if (lastChild && lastChild !== draggedElement) {
-                    lastChild.classList.add('drag-over');
+                const afterElement = getDragAfterElement(container, e.clientY);
+                const allItems = container.querySelectorAll('.drag-item');
+                allItems.forEach(item => item.classList.remove('drag-over'));
+                
+                if (afterElement == null) {
+                    const lastChild = container.querySelector('.drag-item:last-child');
+                    if (lastChild && lastChild !== draggedElement) {
+                        lastChild.classList.add('drag-over');
+                    }
+                } else if (afterElement !== draggedElement) {
+                    afterElement.classList.add('drag-over');
                 }
-            } else if (afterElement !== draggedElement) {
-                afterElement.classList.add('drag-over');
-            }
+            });
 
-            dragAfterElement = afterElement;
-            return false;
+            container.addEventListener('drop', function(e) {
+                e.preventDefault();
+                console.log('📍 放置拖拽項目');
+                
+                const afterElement = getDragAfterElement(container, e.clientY);
+                if (afterElement == null) {
+                    container.appendChild(draggedElement);
+                } else {
+                    container.insertBefore(draggedElement, afterElement);
+                }
+                updateRankNumbers();
+            });
         }
 
-        function handleDrop(e) {
-            if (e.stopPropagation) {
-                e.stopPropagation();
-            }
-
-            const container = document.getElementById('dragContainer');
-            
-            if (dragAfterElement == null) {
-                container.appendChild(draggedElement);
-            } else {
-                container.insertBefore(draggedElement, dragAfterElement);
-            }
-
-            updateRankNumbers();
-            return false;
-        }
-
-        function getDragAfterElement(y) {
-            const container = document.getElementById('dragContainer');
+        function getDragAfterElement(container, y) {
             const draggableElements = [...container.querySelectorAll('.drag-item:not(.dragging)')];
-
+            
             return draggableElements.reduce((closest, child) => {
                 const box = child.getBoundingClientRect();
                 const offset = y - box.top - box.height / 2;
-
+                
                 if (offset < 0 && offset > closest.offset) {
                     return { offset: offset, element: child };
                 } else {
@@ -615,9 +527,13 @@
                 const rankNumber = item.querySelector('.rank-number');
                 rankNumber.textContent = index + 1;
             });
+            console.log('🔢 更新排序號碼');
         }
 
+        // 頁面切換功能
         function proceedToDetails() {
+            console.log('▶️ 進入詳細評分');
+            
             // 保存排序結果
             const items = document.querySelectorAll('.drag-item');
             surveyData.ranking = Array.from(items).map((item, index) => ({
@@ -625,13 +541,15 @@
                 rank: index + 1,
                 title: item.querySelector('.item-title').textContent
             }));
+            
+            console.log('💾 保存排序結果:', surveyData.ranking);
 
             // 生成詳細問題
             generateDetailQuestions();
 
-            // 切換到詳細評分部分
-            document.getElementById('rankingSection').style.display = 'none';
-            document.getElementById('detailsSection').style.display = 'block';
+            // 切換頁面
+            document.getElementById('rankingSection').classList.add('hidden');
+            document.getElementById('detailsSection').classList.remove('hidden');
             
             // 更新進度
             document.getElementById('progressFill').style.width = '100%';
@@ -639,6 +557,8 @@
         }
 
         function generateDetailQuestions() {
+            console.log('📝 生成詳細問題');
+            
             const container = document.getElementById('detailQuestions');
             container.innerHTML = '';
 
@@ -646,7 +566,7 @@
                 const questions = detailQuestions[item.id];
                 if (questions) {
                     const sectionDiv = document.createElement('div');
-                    sectionDiv.className = 'details-section active';
+                    sectionDiv.className = 'detail-section-item';
                     sectionDiv.innerHTML = `
                         <h3 style="color: #3498db; margin-bottom: 20px; font-size: 1.4em;">
                             排序第${index + 1}名：${item.title}
@@ -675,14 +595,18 @@
         }
 
         function backToRanking() {
-            document.getElementById('detailsSection').style.display = 'none';
-            document.getElementById('rankingSection').style.display = 'block';
+            console.log('◀️ 返回排序頁面');
+            
+            document.getElementById('detailsSection').classList.add('hidden');
+            document.getElementById('rankingSection').classList.remove('hidden');
             document.getElementById('progressFill').style.width = '50%';
             document.getElementById('currentStep').textContent = '步驟 1 / 2';
         }
 
-        async function submitSurvey() {
-            // 收集詳細評分數據
+        function submitSurvey() {
+            console.log('📤 提交問卷');
+            
+            // 收集評分數據
             const detailInputs = document.querySelectorAll('#detailQuestions input[type="radio"]:checked');
             
             detailInputs.forEach(input => {
@@ -693,10 +617,41 @@
                 surveyData.details[itemId][`q${questionIndex}`] = parseInt(input.value);
             });
 
-            // 檢查是否所有問題都已回答
+            // 檢查完整性
             const totalQuestions = surveyData.ranking.reduce((total, item) => {
                 return total + (detailQuestions[item.id] ? detailQuestions[item.id].length : 0);
             }, 0);
 
             if (detailInputs.length < totalQuestions) {
-                alert('請完成所
+                alert('請完成所有問題的評分後再提交。');
+                return;
+            }
+
+            // 顯示結果
+            console.log('✅ 問卷完成:', surveyData);
+            
+            const resultText = `問卷提交成功！\n\n您的排序前三名：\n1. ${surveyData.ranking[0].title}\n2. ${surveyData.ranking[1].title}\n3. ${surveyData.ranking[2].title}\n\n感謝您的參與！`;
+            alert(resultText);
+        }
+
+        // 頁面載入完成後初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎬 頁面載入完成，開始初始化');
+            
+            try {
+                initDragAndDrop();
+                console.log('✅ 拖拽功能初始化完成');
+            } catch (error) {
+                console.error('❌ 初始化失敗:', error);
+            }
+        });
+
+        // 錯誤處理
+        window.addEventListener('error', function(e) {
+            console.error('🔥 JavaScript 錯誤:', e.error);
+        });
+
+        console.log('📚 JavaScript 載入完成');
+    </script>
+</body>
+</html>
